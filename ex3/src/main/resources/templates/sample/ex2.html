@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .target {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <ul>
+        <th:block th:each="dto : ${list}">
+            <li  th:class="${dto.sno % 5 == 0} ? 'target'" th:text="${#dates.format(dto.writeDate, 'yyyy년 MM월 dd일')}"></li>
+        </th:block>
+    </ul>
+</body>
+</html>
