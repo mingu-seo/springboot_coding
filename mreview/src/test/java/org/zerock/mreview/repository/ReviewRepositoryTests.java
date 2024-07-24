@@ -15,7 +15,7 @@ public class ReviewRepositoryTests {
     @Autowired
     private ReviewRepository reviewRepository;
 
-    @Test
+    //@Test
     public void insertMembers() {
         IntStream.rangeClosed(1,200).forEach(i->{
             Long mno = (long)(Math.random()*100)+1;

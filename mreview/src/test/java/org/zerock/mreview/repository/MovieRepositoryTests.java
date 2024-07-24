@@ -23,9 +23,9 @@ public class MovieRepositoryTests {
     @Autowired
     private MovieImageRepository imageRepository;
 
-    @Commit // 테스트코드에서 자동 롤백되는 경우
-    @Transactional
-    @Test
+//    @Commit // 테스트코드에서 자동 롤백되는 경우
+//    @Transactional
+//    @Test
     public void insertMoviews() {
         IntStream.rangeClosed(1,100).forEach(i->{
             Movie movie = Movie.builder().title("Movie..."+i).build();
