@@ -21,4 +21,13 @@ public class Review extends BaseEntity{
 
     private int grade;
     private String text;
+
+    // 리뷰평점 수정
+    public void changeGrade(int grade) {
+        this.grade = grade;
+    }
+    // 리뷰내용 수정
+    public void changeText(String text) {
+        this.text = text;
+    }
 }

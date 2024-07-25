@@ -9,9 +9,10 @@ import org.zerock.mreview.entity.Movie;
 import java.util.List;
 
 public interface MovieRepository extends JpaRepository<Movie, Long> {
+    // (select mi2.imgName from MovieImage mi2 where mi2.movie = m order by mi2.inum desc limit 1),
     @Query("""
 select m, 
-(select mi2.imgName from MovieImage mi2 where mi2.movie = m order by mi2.inum desc limit 1), 
+mi,
 avg(coalesce(r.grade,0)), count(distinct r) from Movie m
 left outer join MovieImage mi on mi.movie = m 
 left outer join Review r on r.movie = m 

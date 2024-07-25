@@ -80,12 +80,15 @@ public class UploadController {
     }
 
     @GetMapping("/display")
-    public ResponseEntity<byte[]> getFile(String fileName) {
+    public ResponseEntity<byte[]> getFile(String fileName, String size) {
         ResponseEntity<byte[]> result = null;
         try {
             String srcFileName = URLDecoder.decode(fileName, "UTF-8");
             log.info("fileName:"+srcFileName);
             File file = new File(uploadPath+File.separator+srcFileName);
+            if (size != null && "1".equals(size)) {
+                file = new File(file.getParent(), file.getName().substring(2));
+            }
             log.info("file:"+file);
             HttpHeaders header = new HttpHeaders();
             // MIME타입 처리
