@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thyumeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Login Page</h1>
+    <div th:if="${param.error != null}">
+        <h2>아이디 비밀번호가 올바르지 않습니다.</h2>
+    </div>
+<form method="post">
+    <p>
+        username : <input type="text" name="username" >
+    </p>
+    <p>
+        password : <input type="password" name="password">
+    </p>
+
+    <button type="submit">Login</button>
+</form>
+</body>
+</html>
