@@ -1,10 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thyumeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
     <h1>For All</h1>
+    <th:block th:if="${#authorization.expr('isAuthenticated()')}">
+        <h2>로그인 된 사용자만 볼수 있는 영역</h2>
+        <th:block th:if="${#authentication.principal.email}== 'user1@zerock.org'">
+        <button>삭제버튼</button>
+        </th:block>
+    </th:block>
 </body>
 </html>
