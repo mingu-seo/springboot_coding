@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(function() {
+            $(".btn").click(function() {
+                const jwtValue = getToken();
+                $.ajax({
+                    beforeSend : function(request) {
+                        request.setRequestHeader("Authorization", "Bearer "+jwtValue);
+                    },
+                    dataType : 'json',
+                    url : 'http://localhost:8080/notes/all',
+                    data : {email:'user10@zerock.org'},
+                    success:function(arr) {
+                        console.log(arr);
+                    }
+                })
+            })
+        });
+
+        function getToken() {
+            let token = localStorage.getItem("token");
+            if (!token) {
+                console.log('토큰 발급');
+                $.ajax({
+                    url : 'http://localhost:8080/api/login',
+                    data : {email:'user1@zerock.org', pw:'1111'},
+                    async : false,
+                    success : function(res) {
+                        token = res;
+                        localStorage.setItem("token", res);
+                    }
+                });
+            }
+            return token;
+        }
+    </script>
+</head>
+<body>
+    <input type="button" class="btn" value="ajax">
+</body>
+</html>

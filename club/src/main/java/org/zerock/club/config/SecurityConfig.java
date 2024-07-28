@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,7 +15,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.zerock.club.security.filter.ApiCheckFilter;
+import org.zerock.club.security.filter.ApiLoginFilter;
+import org.zerock.club.security.handler.ApiLoginFailHandler;
 import org.zerock.club.security.handler.ClubLoginSuccessHandler;
+import org.zerock.club.security.util.JWTUtil;
 
 @Configuration
 @EnableWebSecurity
@@ -24,6 +30,11 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public JWTUtil jwtUtil() {
+        return new JWTUtil();
     }
 
 //    @Bean
@@ -64,10 +75,32 @@ public class SecurityConfig {
         http.logout(logout -> {});
         http.oauth2Login(oauth2->oauth2.successHandler(clubLoginSuccessHandler()));
         http.rememberMe(rm->rm.tokenValiditySeconds(60*60*24*7)); // 7일
+        http.addFilterBefore(apiCheckFilter(), UsernamePasswordAuthenticationFilter.class);
+        // AuthenticationManager
+        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        // 추가
+//        authenticationManagerBuilder.userDetailsService(userDe)
+        AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
+        http.authenticationManager(authenticationManager);
+
+        http.addFilterBefore(apiLoginFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
     @Bean
     public ClubLoginSuccessHandler clubLoginSuccessHandler() {
         return new ClubLoginSuccessHandler(passwordEncoder());
+    }
+
+    @Bean
+    public ApiCheckFilter apiCheckFilter() {
+        return new ApiCheckFilter("/notes/**/*", jwtUtil());
+    }
+
+    public ApiLoginFilter apiLoginFilter(AuthenticationManager authenticationManager) throws Exception {
+        // APILoginFIlter
+        ApiLoginFilter apiLoginFilter = new ApiLoginFilter("/api/login", jwtUtil());
+        apiLoginFilter.setAuthenticationManager(authenticationManager);
+        apiLoginFilter.setAuthenticationFailureHandler(new ApiLoginFailHandler());
+        return apiLoginFilter;
     }
 }
